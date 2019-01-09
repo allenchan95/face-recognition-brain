@@ -30,9 +30,29 @@ class App extends Component {
     super();
     this.state= {
       input:'',
-      imageUrl:''
+      imageUrl:'',
+      box:{},
     }
   }
+
+  calculaterFaceLocatioin = (data) => {
+    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+    const image= document.getElementById('inputImage');
+    const width = Number(image.width);
+    const height = Number(image.height);
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row *height,
+      rightCol: width - (clarifaiFace.right_col * width),
+      bottomRow: height - (clarifaiFace.bottom_row * height)
+    }
+
+  }
+  displayFaceBox = (box) =>{
+    console.log(box);
+    this.setState({box:box});
+  }
+
   onInputChange = (event) => {
       this.setState({input: event.target.value})
   }
@@ -42,14 +62,8 @@ class App extends Component {
     app.models.predict(
       Clarifai.FACE_DETECT_MODEL,
       this.state.input)
-      .then(
-        function(response) {
-          console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
-            },
-         function(err) {
-          console.log("error");
-         }
-      );
+      .then(response => this.displayFaceBox(this.calculaterFaceLocatioin(response)))
+      .catch(err => console.log(err));      
   }
   render() {
     return (
@@ -60,7 +74,7 @@ class App extends Component {
           <Logo />
           <Rank />
           <ImageLinkForm onInputChange={this.onInputChange} onButtonClick={this.onButtonClick} />  
-          <FaceReconiton imageUrl={this.state.imageUrl}/>
+          <FaceReconiton box={this.state.box} imageUrl={this.state.imageUrl}/>
             
           
       </div>

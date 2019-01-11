@@ -1,4 +1,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## try this app at
+
+https://smart-brain-2019.herokuapp.com/
 
 ## Available Scripts
 
